@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         deep-rock-wiki
 // @namespace    https://github.com/imDaniX
-// @version      1.0.2
+// @version      1.0.3
 // @description  Transform https://deeprockgalactic.wiki.gg pages into https://deeprock.wiki link
 // @author       imDaniX
 // @homepageURL  https://github.com/imDaniX/deep-rock-wiki
@@ -24,7 +24,7 @@ const MAIN_PAGE = "/Deep_Rock_Galactic_Wiki";
             if (path.endsWith(MAIN_PAGE)) path = path.substring(0, path.length - MAIN_PAGE.length);
             let hash = window.location.hash;
             if (hash && hash != "") path += hash;
-            event.clipboardData.setData("text/plain", "https://deeprock.wiki" + path);
+            event.clipboardData.setData("text/plain", "https://deeprock.wiki" + decodeURI(path).replaceAll(" ", "%20"));
             event.preventDefault();
         }
     });
