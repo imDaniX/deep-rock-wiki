@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         deep-rock-wiki
 // @namespace    https://github.com/imDaniX
-// @version      1.0.4
-// @description  Copy https://deeprockgalactic.wiki.gg pages into https://deeprock.wiki links
+// @version      1.0.5
+// @description  Transform https://deeprockgalactic.wiki.gg pages into https://deeprock.wiki link
 // @author       imDaniX
 // @homepageURL  https://github.com/imDaniX/deep-rock-wiki
 // @license      MIT; https://opensource.org/license/mit
@@ -18,17 +18,15 @@ const MAIN_PAGE = "/Deep_Rock_Galactic_Wiki";
     'use strict';
 
     addEventListener("copy", (event) => {
-        let path = window.location.pathname.replace("/wiki", "");
-        if (path.includes("action=edit")) return;
+        let location = window.location;
+        if (hasSelection() || location.search.includes("action=edit")) return;
+
+        let path = location.pathname;
         if (path.endsWith(MAIN_PAGE)) path = path.substring(0, path.length - MAIN_PAGE.length);
 
-        let selection = getSelectionText();
-        if (selection && selection.toString() != "") return;
+        path = decodeURI(path.replace("/wiki", "") + location.search + location.hash).replaceAll(" ", "%20");
 
-        let hash = window.location.hash;
-        if (hash && hash != "") path += hash;
-
-        event.clipboardData.setData("text/plain", "https://deeprock.wiki" + decodeURI(path).replaceAll(" ", "%20"));
+        event.clipboardData.setData("text/plain", "https://deeprock.wiki" + path);
         event.preventDefault();
     });
 })();
@@ -36,7 +34,7 @@ const MAIN_PAGE = "/Deep_Rock_Galactic_Wiki";
 /**
  * https://stackoverflow.com/a/5379408
  */
-function getSelectionText() {
+function hasSelection() {
     let text = "";
     const activeEl = document.activeElement;
     const activeElTagName = activeEl ? activeEl.tagName.toLowerCase() : null;
@@ -50,5 +48,5 @@ function getSelectionText() {
         text = window.getSelection().toString();
     }
 
-    return text;
+    return text && text != "";
 }
