@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         deep-rock-wiki
 // @namespace    https://github.com/imDaniX
-// @version      1.0.5
+// @version      1.0.6
 // @description  Transform https://deeprockgalactic.wiki.gg pages into https://deeprock.wiki link
 // @author       imDaniX
 // @homepageURL  https://github.com/imDaniX/deep-rock-wiki
@@ -24,7 +24,7 @@ const MAIN_PAGE = "/Deep_Rock_Galactic_Wiki";
         let path = location.pathname;
         if (path.endsWith(MAIN_PAGE)) path = path.substring(0, path.length - MAIN_PAGE.length);
 
-        path = decodeURI(path.replace("/wiki", "") + location.search + location.hash).replaceAll(" ", "%20");
+        path = decodeURI(path.replace("index.php", "").replace("/wiki", "") + location.search + location.hash).replaceAll(" ", "%20");
 
         event.clipboardData.setData("text/plain", "https://deeprock.wiki" + path);
         event.preventDefault();
