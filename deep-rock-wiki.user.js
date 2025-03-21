@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         deep-rock-wiki
 // @namespace    https://github.com/imDaniX
-// @version      1.0.6
+// @version      1.1.0
 // @description  Transform https://deeprockgalactic.wiki.gg pages into https://deeprock.wiki link
 // @author       imDaniX
 // @homepageURL  https://github.com/imDaniX/deep-rock-wiki
@@ -12,7 +12,10 @@
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=deeprockgalactic.wiki.gg
 // ==/UserScript==
 
+const MAIN_DOMAIN = "deeprock.wiki"
 const MAIN_PAGE = "/Deep_Rock_Galactic_Wiki";
+const SURVIVOR_NAMESPACE = "/Survivor:"
+const SURVIVOR_PAGE = SURVIVOR_NAMESPACE + "Main";
 
 (function() {
     'use strict';
@@ -21,12 +24,20 @@ const MAIN_PAGE = "/Deep_Rock_Galactic_Wiki";
         let location = window.location;
         if (hasSelection() || location.search.includes("action=edit")) return;
 
-        let path = location.pathname;
-        if (path.endsWith(MAIN_PAGE)) path = path.substring(0, path.length - MAIN_PAGE.length);
+        let path = location.pathname.replace("index.php", "").replace("/wiki", "");
+        let domain = MAIN_DOMAIN;
+        if (path == MAIN_PAGE || path == "/") {
+            path = "";
+        } else if (path.startsWith(SURVIVOR_NAMESPACE)) {
+            domain = "survivor." + domain;
+            path = path != SURVIVOR_PAGE
+                ? path.replace("Survivor:", "")
+                : ""
+        }
 
-        path = decodeURI(path.replace("index.php", "").replace("/wiki", "") + location.search + location.hash).replaceAll(" ", "%20");
+        path = decodeURI(path + location.search + location.hash).replaceAll(" ", "%20");
 
-        event.clipboardData.setData("text/plain", "https://deeprock.wiki" + path);
+        event.clipboardData.setData("text/plain", `https://${domain}${path}`);
         event.preventDefault();
     });
 })();
